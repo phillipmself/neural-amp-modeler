@@ -469,6 +469,14 @@ class Dataset(AbstractDataset, _InitializableFromConfig):
         return self._sample_rate
 
     @property
+    def common_params(self) -> _Optional[_Dict[str, _Any]]:
+        return self._common_params
+
+    @property
+    def param_map(self) -> _Optional[_Dict[str, _Any]]:
+        return self._param_map
+
+    @property
     def x(self) -> _torch.Tensor:
         """
         The input audio data

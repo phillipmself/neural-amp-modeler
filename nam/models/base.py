@@ -343,6 +343,7 @@ class ParametricBaseNet(BaseNet):
     def handshake(self, dataset: "nam.data.AbstractDataset"):  # noqa: F821
         super().handshake(dataset)
         from ..data import ConcatDataset, ParametricDataset
+        from .parametric.params import Param as _Param
 
         representative = dataset
         if isinstance(dataset, ConcatDataset):
@@ -355,6 +356,13 @@ class ParametricBaseNet(BaseNet):
             raise ModelDatasetHandshakeError(
                 f"Dataset is not a parametric NAM dataset: {type(dataset)}"
             )
+        if self._parametric_config is None and representative.common_params is not None:
+            param_config = {}
+            for key, value in representative.common_params.items():
+                param_config[key] = (
+                    value if isinstance(value, _Param) else _Param.init_from_config(value)
+                )
+            self.set_parametric_config(param_config)
         if self._param_names is None and hasattr(representative, "keys"):
             self._param_names = tuple(representative.keys)
         if self._param_defaults is None and hasattr(representative, "vals"):
